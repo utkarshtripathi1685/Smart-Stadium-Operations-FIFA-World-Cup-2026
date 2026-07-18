@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Smart Stadium Operations — FIFA World Cup 2026</title>
+  <meta name="description" content="GenAI-powered stadium operations platform for FIFA World Cup 2026. Real-time crowd management, fan navigation, accessibility, and decision support."/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-container">
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo"><div class="logo-icon">⚽</div><span>Smart Stadium</span></div>
+    <div class="sidebar-subtitle">FIFA World Cup 2026</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Fan Services</div>
+    <button class="nav-item active" data-page="overview"><span class="nav-icon">📊</span>Overview</button>
+    <button class="nav-item" data-page="navigation"><span class="nav-icon">🗺️</span>Fan Navigation</button>
+    <button class="nav-item" data-page="accessibility"><span class="nav-icon">♿</span>Accessibility</button>
+    <button class="nav-item" data-page="transport"><span class="nav-icon">🚌</span>Transportation</button>
+    <button class="nav-item" data-page="language"><span class="nav-icon">🌍</span>Multilingual</button>
+    <div class="nav-section-label">Operations</div>
+    <button class="nav-item" data-page="crowd"><span class="nav-icon">👥</span>Crowd Mgmt<span class="nav-badge" id="crowdBadge">0</span></button>
+    <button class="nav-item" data-page="sustainability"><span class="nav-icon">🌱</span>Sustainability</button>
+    <button class="nav-item" data-page="ops"><span class="nav-icon">🖥️</span>Ops Dashboard</button>
+    <button class="nav-item" data-page="decision"><span class="nav-icon">⚡</span>Decision Engine<span class="nav-badge" id="decisionBadge">0</span></button>
+  </nav>
+  <div class="sidebar-footer">
+    <div><span class="live-dot"></span>LIVE — MetLife Stadium</div>
+    <div style="margin-top:4px;">Match: USA vs Mexico · 67'</div>
+  </div>
+</aside>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main-content">
+
+<!-- PAGE: OVERVIEW -->
+<section class="page active" id="page-overview">
+  <div class="page-header">
+    <h1>📊 Operations Overview</h1>
+    <p>Real-time unified view of all stadium operations — <span class="live-dot"></span>Live</p>
+  </div>
+  <div class="stats-grid" id="overviewStats"></div>
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card"><div class="card-title">👥 Crowd Density Trend</div><div class="chart-container"><canvas id="chartCrowdTrend"></canvas></div></div>
+    <div class="card"><div class="card-title">🌱 Energy Consumption (kWh)</div><div class="chart-container"><canvas id="chartEnergyTrend"></canvas></div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">⚡ Active Incidents</div><div class="alert-list" id="overviewIncidents"></div></div>
+    <div class="card"><div class="card-title">🤖 Latest AI Briefing</div><div class="briefing-card" id="overviewBriefing"></div></div>
+  </div>
+</section>
+
+<!-- PAGE: FAN NAVIGATION -->
+<section class="page" id="page-navigation">
+  <div class="page-header">
+    <h1>🗺️ Fan Navigation & Wayfinding</h1>
+    <p>AI-powered indoor navigation to any seat, POI, or zone</p>
+  </div>
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-title">🔍 Find Your Way</div>
+      <div class="search-box">
+        <span>📍</span>
+        <input type="text" id="navSearchInput" placeholder="Where do you want to go? e.g. Section 114, nearest restroom, halal food..."/>
+      </div>
+      <div class="toggle-row">
+        <button class="toggle" id="accessibleRouteToggle" onclick="this.classList.toggle('on')"></button>
+        <span class="toggle-label">♿ Wheelchair-accessible routes only</span>
+      </div>
+      <div class="toggle-row">
+        <button class="toggle" id="offlineToggle" onclick="this.classList.toggle('on')"></button>
+        <span class="toggle-label">📴 Offline mode (cached venue map)</span>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="window.StadiumApp.generateRoute()">Generate Route</button>
+      <div id="navRouteResult" style="margin-top:16px"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 Popular Destinations</div>
+      <div id="navPOIList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE: CROWD MANAGEMENT -->
+<section class="page" id="page-crowd">
+  <div class="page-header">
+    <h1>👥 Crowd Management</h1>
+    <p>Real-time zone density monitoring and surge prediction</p>
+  </div>
+  <div class="stats-grid" id="crowdStats"></div>
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title"><span class="live-dot"></span>Zone Density Heatmap</div>
+      <div class="zone-grid" id="zoneHeatmap"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📈 15-Min Surge Prediction</div>
+      <div class="chart-container"><canvas id="chartSurgePred"></canvas></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🔔 Crowd Alerts</div>
+    <div class="alert-list" id="crowdAlerts"></div>
+  </div>
+</section>
+
+<!-- PAGE: ACCESSIBILITY -->
+<section class="page" id="page-accessibility">
+  <div class="page-header">
+    <h1>♿ Accessibility Support</h1>
+    <p>Infrastructure status, accessible routing, and accommodation services</p>
+  </div>
+  <div class="stats-grid" id="a11yStats"></div>
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">🏗️ Infrastructure Status</div>
+      <table class="infra-table" id="infraTable">
+        <thead><tr><th>Facility</th><th>Type</th><th>Zone</th><th>Status</th></tr></thead>
+        <tbody id="infraBody"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">🔔 Accessibility Alerts</div>
+      <div class="alert-list" id="a11yAlerts"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">💬 Accessibility Assistant</div>
+    <div class="chat-panel">
+      <div class="chat-messages" id="a11yChatMessages"></div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="a11yChatInput" placeholder="Ask about accessibility services..."/>
+        <button class="btn btn-primary btn-sm" onclick="window.StadiumApp.sendA11yChat()">Send</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE: TRANSPORTATION -->
+<section class="page" id="page-transport">
+  <div class="page-header">
+    <h1>🚌 Transportation Coordination</h1>
+    <p>Pre- and post-match transport planning with AI-powered guidance</p>
+  </div>
+  <div class="stats-grid" id="transportStats"></div>
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">🚉 Available Transport Options</div>
+      <div id="transportOptions"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🤖 AI Departure Recommendations</div>
+      <div id="departureRecs"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📋 Journey Planner</div>
+    <div class="grid-2" style="margin-bottom:10px">
+      <div class="search-box"><span>📍</span><input id="journeyFrom" placeholder="Your location (e.g. Times Square, Hotel XYZ)"/></div>
+      <div class="search-box"><span>🏟️</span><input id="journeySeat" placeholder="Your seat (e.g. Section 114 Row B)"/></div>
+    </div>
+    <button class="btn btn-primary" onclick="window.StadiumApp.planJourney()">Plan My Journey</button>
+    <div id="journeyResult" style="margin-top:14px"></div>
+  </div>
+</section>
+
+<!-- PAGE: SUSTAINABILITY -->
+<section class="page" id="page-sustainability">
+  <div class="page-header">
+    <h1>🌱 Sustainability Monitoring</h1>
+    <p>Energy, waste, and carbon footprint tracking with AI recommendations</p>
+  </div>
+  <div class="stats-grid" id="sustainStats"></div>
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card"><div class="card-title">⚡ Energy by Zone</div><div class="chart-container"><canvas id="chartEnergyZone"></canvas></div></div>
+    <div class="card"><div class="card-title">🗑️ Waste Fill Levels</div><div class="chart-container"><canvas id="chartWaste"></canvas></div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🤖 AI Eco-Recommendations</div>
+      <div id="ecoRecommendations"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔔 Sustainability Alerts</div>
+      <div class="alert-list" id="sustainAlerts"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE: MULTILINGUAL -->
+<section class="page" id="page-language">
+  <div class="page-header">
+    <h1>🌍 Multilingual Assistance</h1>
+    <p>Real-time translation across 32 FIFA tournament languages</p>
+  </div>
+  <div class="stats-grid" id="langStats"></div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">🌐 Supported Languages (32)</div>
+    <div class="lang-grid" id="langGrid"></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">💬 AI Translation Panel</div>
+      <div class="chat-panel">
+        <div class="chat-messages" id="langChatMessages"></div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="langChatInput" placeholder="Type in any language..."/>
+          <button class="btn btn-primary btn-sm" onclick="window.StadiumApp.sendLangChat()">Translate</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">👥 Staff↔Fan Bridge</div>
+      <div class="chat-panel">
+        <div class="chat-messages" id="bridgeChatMessages"></div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="bridgeChatInput" placeholder="Staff message (auto-translated)..."/>
+          <button class="btn btn-success btn-sm" onclick="window.StadiumApp.sendBridgeChat()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE: OPS DASHBOARD -->
+<section class="page" id="page-ops">
+  <div class="page-header">
+    <h1>🖥️ Operational Intelligence</h1>
+    <p>Unified operational dashboard for staff and organizers</p>
+  </div>
+  <div class="stats-grid" id="opsStats"></div>
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">🤖 AI Operational Briefings</div>
+      <div id="opsBriefings" style="max-height:340px;overflow-y:auto"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 Incident Log</div>
+      <div id="opsIncidents" style="max-height:340px;overflow-y:auto"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">🔍 Natural Language Query</div>
+    <div class="search-box">
+      <span>🤖</span>
+      <input id="opsQueryInput" placeholder="Ask anything about operations... e.g. 'Which zone has the highest crowd density?'"/>
+    </div>
+    <button class="btn btn-primary" onclick="window.StadiumApp.opsQuery()">Ask AI</button>
+    <div id="opsQueryResult" style="margin-top:12px"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📜 Audit Trail (90-day retention)</div>
+    <div style="max-height:260px;overflow-y:auto">
+      <table class="audit-table">
+        <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Zone</th><th>Details</th></tr></thead>
+        <tbody id="auditBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE: DECISION ENGINE -->
+<section class="page" id="page-decision">
+  <div class="page-header">
+    <h1>⚡ Real-Time Decision Support</h1>
+    <p>AI-generated prioritized recommendations during high-pressure operations</p>
+  </div>
+  <div class="stats-grid" id="decisionStats"></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🚨 Active Incidents</div>
+      <div id="decisionIncidents" style="max-height:500px;overflow-y:auto"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🤖 AI Recommendations</div>
+      <div id="decisionRecs" style="max-height:500px;overflow-y:auto"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script src="data.js"></script>
+<script src="render.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
