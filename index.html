@@ -4,225 +4,245 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Smart Stadium Operations — FIFA World Cup 2026</title>
-  <meta name="description" content="GenAI-powered stadium operations platform for FIFA World Cup 2026. Real-time crowd management, fan navigation, accessibility, and decision support."/>
+  <meta name="description" content="GenAI-powered stadium operations platform for FIFA World Cup 2026. Real-time crowd management, fan navigation, accessibility, transportation, sustainability, multilingual assistance, operational intelligence, and decision support."/>
+  <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';"/>
+  <meta name="referrer" content="strict-origin-when-cross-origin"/>
   <link rel="stylesheet" href="style.css"/>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
-<div class="bg-mesh"></div>
+<!-- Skip Navigation Link (WCAG 2.1 AA) -->
+<a href="#mainContent" class="sr-only sr-only-focusable" id="skipLink">Skip to main content</a>
+
+<div class="bg-mesh" aria-hidden="true"></div>
 <div class="app-container">
 
 <!-- ===== SIDEBAR ===== -->
-<aside class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
   <div class="sidebar-header">
-    <div class="sidebar-logo"><div class="logo-icon">⚽</div><span>Smart Stadium</span></div>
+    <div class="sidebar-logo"><div class="logo-icon" aria-hidden="true">⚽</div><span>Smart Stadium</span></div>
     <div class="sidebar-subtitle">FIFA World Cup 2026</div>
   </div>
-  <nav class="sidebar-nav">
-    <div class="nav-section-label">Fan Services</div>
-    <button class="nav-item active" data-page="overview"><span class="nav-icon">📊</span>Overview</button>
-    <button class="nav-item" data-page="navigation"><span class="nav-icon">🗺️</span>Fan Navigation</button>
-    <button class="nav-item" data-page="accessibility"><span class="nav-icon">♿</span>Accessibility</button>
-    <button class="nav-item" data-page="transport"><span class="nav-icon">🚌</span>Transportation</button>
-    <button class="nav-item" data-page="language"><span class="nav-icon">🌍</span>Multilingual</button>
-    <div class="nav-section-label">Operations</div>
-    <button class="nav-item" data-page="crowd"><span class="nav-icon">👥</span>Crowd Mgmt<span class="nav-badge" id="crowdBadge">0</span></button>
-    <button class="nav-item" data-page="sustainability"><span class="nav-icon">🌱</span>Sustainability</button>
-    <button class="nav-item" data-page="ops"><span class="nav-icon">🖥️</span>Ops Dashboard</button>
-    <button class="nav-item" data-page="decision"><span class="nav-icon">⚡</span>Decision Engine<span class="nav-badge" id="decisionBadge">0</span></button>
+  <nav class="sidebar-nav" aria-label="Module navigation">
+    <div class="nav-section-label" id="fanServicesLabel">Fan Services</div>
+    <div role="group" aria-labelledby="fanServicesLabel">
+      <button class="nav-item active" data-page="overview" aria-current="page" aria-label="Operations Overview"><span class="nav-icon" aria-hidden="true">📊</span>Overview</button>
+      <button class="nav-item" data-page="navigation" aria-label="Fan Navigation and Wayfinding"><span class="nav-icon" aria-hidden="true">🗺️</span>Fan Navigation</button>
+      <button class="nav-item" data-page="accessibility" aria-label="Accessibility Support"><span class="nav-icon" aria-hidden="true">♿</span>Accessibility</button>
+      <button class="nav-item" data-page="transport" aria-label="Transportation Coordination"><span class="nav-icon" aria-hidden="true">🚌</span>Transportation</button>
+      <button class="nav-item" data-page="language" aria-label="Multilingual Assistance"><span class="nav-icon" aria-hidden="true">🌍</span>Multilingual</button>
+    </div>
+    <div class="nav-section-label" id="opsLabel">Operations</div>
+    <div role="group" aria-labelledby="opsLabel">
+      <button class="nav-item" data-page="crowd" aria-label="Crowd Management"><span class="nav-icon" aria-hidden="true">👥</span>Crowd Mgmt<span class="nav-badge" id="crowdBadge" aria-label="alerts">0</span></button>
+      <button class="nav-item" data-page="sustainability" aria-label="Sustainability Monitoring"><span class="nav-icon" aria-hidden="true">🌱</span>Sustainability</button>
+      <button class="nav-item" data-page="ops" aria-label="Operational Intelligence Dashboard"><span class="nav-icon" aria-hidden="true">🖥️</span>Ops Dashboard</button>
+      <button class="nav-item" data-page="decision" aria-label="Decision Engine"><span class="nav-icon" aria-hidden="true">⚡</span>Decision Engine<span class="nav-badge" id="decisionBadge" aria-label="active incidents">0</span></button>
+    </div>
   </nav>
-  <div class="sidebar-footer">
-    <div><span class="live-dot"></span>LIVE — MetLife Stadium</div>
+  <div class="sidebar-footer" role="status" aria-live="polite">
+    <div><span class="live-dot" aria-hidden="true"></span>LIVE — MetLife Stadium</div>
     <div style="margin-top:4px;">Match: USA vs Mexico · 67'</div>
   </div>
 </aside>
 
 <!-- ===== MAIN CONTENT ===== -->
-<main class="main-content">
+<main class="main-content" id="mainContent" role="main" aria-label="Stadium operations dashboard">
 
 <!-- PAGE: OVERVIEW -->
-<section class="page active" id="page-overview">
+<section class="page active" id="page-overview" role="region" aria-label="Operations Overview">
   <div class="page-header">
-    <h1>📊 Operations Overview</h1>
-    <p>Real-time unified view of all stadium operations — <span class="live-dot"></span>Live</p>
+    <h1 tabindex="-1">📊 Operations Overview</h1>
+    <p>Real-time unified view of all stadium operations — <span class="live-dot" aria-hidden="true"></span><span role="status">Live</span></p>
   </div>
-  <div class="stats-grid" id="overviewStats"></div>
+  <div class="stats-grid" id="overviewStats" aria-live="polite" aria-label="Overview statistics"></div>
   <div class="grid-2" style="margin-bottom:16px">
-    <div class="card"><div class="card-title">👥 Crowd Density Trend</div><div class="chart-container"><canvas id="chartCrowdTrend"></canvas></div></div>
-    <div class="card"><div class="card-title">🌱 Energy Consumption (kWh)</div><div class="chart-container"><canvas id="chartEnergyTrend"></canvas></div></div>
+    <div class="card"><div class="card-title" id="crowdChartLabel">👥 Crowd Density Trend</div><div class="chart-container" role="img" aria-labelledby="crowdChartLabel"><canvas id="chartCrowdTrend" aria-label="Crowd density trend chart"></canvas></div></div>
+    <div class="card"><div class="card-title" id="energyChartLabel">🌱 Energy Consumption (kWh)</div><div class="chart-container" role="img" aria-labelledby="energyChartLabel"><canvas id="chartEnergyTrend" aria-label="Energy consumption trend chart"></canvas></div></div>
   </div>
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card"><div class="card-title">⚡ Active Incidents</div><div class="alert-list" id="overviewIncidents" role="list" aria-live="polite" aria-label="Active incidents"></div></div>
+    <div class="card"><div class="card-title">🤖 Latest AI Briefing</div><div class="briefing-card" id="overviewBriefing" role="article" aria-live="polite" aria-label="Latest AI briefing"></div></div>
+  </div>
+  <!-- Service Status & AI Provider (Req 7.1, 9.3) -->
   <div class="grid-2">
-    <div class="card"><div class="card-title">⚡ Active Incidents</div><div class="alert-list" id="overviewIncidents"></div></div>
-    <div class="card"><div class="card-title">🤖 Latest AI Briefing</div><div class="briefing-card" id="overviewBriefing"></div></div>
+    <div class="card"><div class="card-title">🔗 Service Connectivity (Req 7.1)</div><div id="serviceStatusPanel" role="list" aria-live="polite" aria-label="Service connectivity status"></div></div>
+    <div class="card"><div class="card-title">🤖 AI Provider Status (Req 9.3)</div><div id="aiProviderStatus" role="status" aria-live="polite" aria-label="AI provider status"></div></div>
   </div>
 </section>
 
 <!-- PAGE: FAN NAVIGATION -->
-<section class="page" id="page-navigation">
+<section class="page" id="page-navigation" role="region" aria-label="Fan Navigation and Wayfinding">
   <div class="page-header">
-    <h1>🗺️ Fan Navigation & Wayfinding</h1>
+    <h1 tabindex="-1">🗺️ Fan Navigation &amp; Wayfinding</h1>
     <p>AI-powered indoor navigation to any seat, POI, or zone</p>
   </div>
   <div class="grid-2-1">
     <div class="card">
       <div class="card-title">🔍 Find Your Way</div>
       <div class="search-box">
-        <span>📍</span>
-        <input type="text" id="navSearchInput" placeholder="Where do you want to go? e.g. Section 114, nearest restroom, halal food..."/>
+        <span aria-hidden="true">📍</span>
+        <label for="navSearchInput" class="sr-only">Destination</label>
+        <input type="text" id="navSearchInput" placeholder="Where do you want to go? e.g. Section 114, nearest restroom, halal food..." maxlength="500" aria-describedby="navSearchHint"/>
       </div>
+      <div id="navSearchHint" class="sr-only">Enter a seat number, POI type, or zone name for AI-powered route generation</div>
       <div class="toggle-row">
-        <button class="toggle" id="accessibleRouteToggle" onclick="this.classList.toggle('on')"></button>
+        <button class="toggle" id="accessibleRouteToggle" role="switch" aria-checked="false" aria-label="Wheelchair-accessible routes only" tabindex="0"></button>
         <span class="toggle-label">♿ Wheelchair-accessible routes only</span>
       </div>
       <div class="toggle-row">
-        <button class="toggle" id="offlineToggle" onclick="this.classList.toggle('on')"></button>
+        <button class="toggle" id="offlineToggle" role="switch" aria-checked="false" aria-label="Offline mode with cached venue map" tabindex="0"></button>
         <span class="toggle-label">📴 Offline mode (cached venue map)</span>
       </div>
-      <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="window.StadiumApp.generateRoute()">Generate Route</button>
-      <div id="navRouteResult" style="margin-top:16px"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="window.StadiumApp.generateRoute()" aria-label="Generate navigation route">Generate Route</button>
+      <div id="navRouteResult" style="margin-top:16px" aria-live="polite" role="region" aria-label="Route result"></div>
     </div>
     <div class="card">
       <div class="card-title">📋 Popular Destinations</div>
-      <div id="navPOIList"></div>
+      <div id="navPOIList" role="list" aria-label="Points of interest"></div>
     </div>
   </div>
 </section>
 
 <!-- PAGE: CROWD MANAGEMENT -->
-<section class="page" id="page-crowd">
+<section class="page" id="page-crowd" role="region" aria-label="Crowd Management">
   <div class="page-header">
-    <h1>👥 Crowd Management</h1>
+    <h1 tabindex="-1">👥 Crowd Management</h1>
     <p>Real-time zone density monitoring and surge prediction</p>
   </div>
-  <div class="stats-grid" id="crowdStats"></div>
+  <div class="stats-grid" id="crowdStats" aria-live="polite" aria-label="Crowd statistics"></div>
   <div class="grid-2" style="margin-bottom:16px">
     <div class="card">
-      <div class="card-title"><span class="live-dot"></span>Zone Density Heatmap</div>
-      <div class="zone-grid" id="zoneHeatmap"></div>
+      <div class="card-title"><span class="live-dot" aria-hidden="true"></span>Zone Density Heatmap</div>
+      <div class="zone-grid" id="zoneHeatmap" role="grid" aria-label="Zone density heatmap"></div>
     </div>
     <div class="card">
-      <div class="card-title">📈 15-Min Surge Prediction</div>
-      <div class="chart-container"><canvas id="chartSurgePred"></canvas></div>
+      <div class="card-title" id="surgeChartLabel">📈 15-Min Surge Prediction</div>
+      <div class="chart-container" role="img" aria-labelledby="surgeChartLabel"><canvas id="chartSurgePred" aria-label="15 minute surge prediction chart"></canvas></div>
     </div>
   </div>
   <div class="card">
     <div class="card-title">🔔 Crowd Alerts</div>
-    <div class="alert-list" id="crowdAlerts"></div>
+    <div class="alert-list" id="crowdAlerts" role="list" aria-live="assertive" aria-label="Crowd alerts"></div>
   </div>
 </section>
 
 <!-- PAGE: ACCESSIBILITY -->
-<section class="page" id="page-accessibility">
+<section class="page" id="page-accessibility" role="region" aria-label="Accessibility Support">
   <div class="page-header">
-    <h1>♿ Accessibility Support</h1>
+    <h1 tabindex="-1">♿ Accessibility Support</h1>
     <p>Infrastructure status, accessible routing, and accommodation services</p>
   </div>
-  <div class="stats-grid" id="a11yStats"></div>
+  <div class="stats-grid" id="a11yStats" aria-live="polite" aria-label="Accessibility statistics"></div>
   <div class="grid-2" style="margin-bottom:16px">
     <div class="card">
       <div class="card-title">🏗️ Infrastructure Status</div>
-      <table class="infra-table" id="infraTable">
-        <thead><tr><th>Facility</th><th>Type</th><th>Zone</th><th>Status</th></tr></thead>
+      <table class="infra-table" id="infraTable" aria-label="Accessibility infrastructure status">
+        <thead><tr><th scope="col">Facility</th><th scope="col">Type</th><th scope="col">Zone</th><th scope="col">Status</th></tr></thead>
         <tbody id="infraBody"></tbody>
       </table>
     </div>
     <div class="card">
       <div class="card-title">🔔 Accessibility Alerts</div>
-      <div class="alert-list" id="a11yAlerts"></div>
+      <div class="alert-list" id="a11yAlerts" role="list" aria-live="polite" aria-label="Accessibility alerts"></div>
     </div>
   </div>
   <div class="card">
     <div class="card-title">💬 Accessibility Assistant</div>
-    <div class="chat-panel">
-      <div class="chat-messages" id="a11yChatMessages"></div>
+    <div class="chat-panel" role="region" aria-label="Accessibility assistant chat">
+      <div class="chat-messages" id="a11yChatMessages" role="log" aria-live="polite" aria-label="Chat messages"></div>
       <div class="chat-input-row">
-        <input class="chat-input" id="a11yChatInput" placeholder="Ask about accessibility services..."/>
-        <button class="btn btn-primary btn-sm" onclick="window.StadiumApp.sendA11yChat()">Send</button>
+        <label for="a11yChatInput" class="sr-only">Ask about accessibility services</label>
+        <input class="chat-input" id="a11yChatInput" placeholder="Ask about accessibility services..." maxlength="500"/>
+        <button class="btn btn-primary btn-sm" onclick="window.StadiumApp.sendA11yChat()" aria-label="Send accessibility question">Send</button>
       </div>
     </div>
   </div>
 </section>
 
 <!-- PAGE: TRANSPORTATION -->
-<section class="page" id="page-transport">
+<section class="page" id="page-transport" role="region" aria-label="Transportation Coordination">
   <div class="page-header">
-    <h1>🚌 Transportation Coordination</h1>
+    <h1 tabindex="-1">🚌 Transportation Coordination</h1>
     <p>Pre- and post-match transport planning with AI-powered guidance</p>
   </div>
-  <div class="stats-grid" id="transportStats"></div>
+  <div class="stats-grid" id="transportStats" aria-live="polite" aria-label="Transport statistics"></div>
   <div class="grid-2" style="margin-bottom:16px">
     <div class="card">
       <div class="card-title">🚉 Available Transport Options</div>
-      <div id="transportOptions"></div>
+      <div id="transportOptions" role="list" aria-label="Transport options"></div>
     </div>
     <div class="card">
       <div class="card-title">🤖 AI Departure Recommendations</div>
-      <div id="departureRecs"></div>
+      <div id="departureRecs" role="region" aria-live="polite" aria-label="AI departure recommendations"></div>
     </div>
   </div>
   <div class="card">
     <div class="card-title">📋 Journey Planner</div>
     <div class="grid-2" style="margin-bottom:10px">
-      <div class="search-box"><span>📍</span><input id="journeyFrom" placeholder="Your location (e.g. Times Square, Hotel XYZ)"/></div>
-      <div class="search-box"><span>🏟️</span><input id="journeySeat" placeholder="Your seat (e.g. Section 114 Row B)"/></div>
+      <div class="search-box"><span aria-hidden="true">📍</span><label for="journeyFrom" class="sr-only">Your origin location</label><input id="journeyFrom" placeholder="Your location (e.g. Times Square, Hotel XYZ)" maxlength="500"/></div>
+      <div class="search-box"><span aria-hidden="true">🏟️</span><label for="journeySeat" class="sr-only">Your seat location</label><input id="journeySeat" placeholder="Your seat (e.g. Section 114 Row B)" maxlength="500"/></div>
     </div>
-    <button class="btn btn-primary" onclick="window.StadiumApp.planJourney()">Plan My Journey</button>
-    <div id="journeyResult" style="margin-top:14px"></div>
+    <button class="btn btn-primary" onclick="window.StadiumApp.planJourney()" aria-label="Plan end-to-end journey">Plan My Journey</button>
+    <div id="journeyResult" style="margin-top:14px" aria-live="polite" role="region" aria-label="Journey plan result"></div>
   </div>
 </section>
 
 <!-- PAGE: SUSTAINABILITY -->
-<section class="page" id="page-sustainability">
+<section class="page" id="page-sustainability" role="region" aria-label="Sustainability Monitoring">
   <div class="page-header">
-    <h1>🌱 Sustainability Monitoring</h1>
+    <h1 tabindex="-1">🌱 Sustainability Monitoring</h1>
     <p>Energy, waste, and carbon footprint tracking with AI recommendations</p>
   </div>
-  <div class="stats-grid" id="sustainStats"></div>
+  <div class="stats-grid" id="sustainStats" aria-live="polite" aria-label="Sustainability statistics"></div>
   <div class="grid-2" style="margin-bottom:16px">
-    <div class="card"><div class="card-title">⚡ Energy by Zone</div><div class="chart-container"><canvas id="chartEnergyZone"></canvas></div></div>
-    <div class="card"><div class="card-title">🗑️ Waste Fill Levels</div><div class="chart-container"><canvas id="chartWaste"></canvas></div></div>
+    <div class="card"><div class="card-title" id="energyZoneLabel">⚡ Energy by Zone</div><div class="chart-container" role="img" aria-labelledby="energyZoneLabel"><canvas id="chartEnergyZone" aria-label="Energy consumption by zone chart"></canvas></div></div>
+    <div class="card"><div class="card-title" id="wasteLabel">🗑️ Waste Fill Levels</div><div class="chart-container" role="img" aria-labelledby="wasteLabel"><canvas id="chartWaste" aria-label="Waste fill levels chart"></canvas></div></div>
   </div>
   <div class="grid-2">
     <div class="card">
       <div class="card-title">🤖 AI Eco-Recommendations</div>
-      <div id="ecoRecommendations"></div>
+      <div id="ecoRecommendations" role="list" aria-live="polite" aria-label="AI eco-recommendations"></div>
     </div>
     <div class="card">
       <div class="card-title">🔔 Sustainability Alerts</div>
-      <div class="alert-list" id="sustainAlerts"></div>
+      <div class="alert-list" id="sustainAlerts" role="list" aria-live="polite" aria-label="Sustainability alerts"></div>
     </div>
   </div>
 </section>
 
 <!-- PAGE: MULTILINGUAL -->
-<section class="page" id="page-language">
+<section class="page" id="page-language" role="region" aria-label="Multilingual Assistance">
   <div class="page-header">
-    <h1>🌍 Multilingual Assistance</h1>
+    <h1 tabindex="-1">🌍 Multilingual Assistance</h1>
     <p>Real-time translation across 32 FIFA tournament languages</p>
   </div>
-  <div class="stats-grid" id="langStats"></div>
+  <div class="stats-grid" id="langStats" aria-live="polite" aria-label="Language statistics"></div>
   <div class="card" style="margin-bottom:16px">
     <div class="card-title">🌐 Supported Languages (32)</div>
-    <div class="lang-grid" id="langGrid"></div>
+    <div class="lang-grid" id="langGrid" role="radiogroup" aria-label="Select active language"></div>
   </div>
   <div class="grid-2">
     <div class="card">
       <div class="card-title">💬 AI Translation Panel</div>
-      <div class="chat-panel">
-        <div class="chat-messages" id="langChatMessages"></div>
+      <div class="chat-panel" role="region" aria-label="AI translation chat">
+        <div class="chat-messages" id="langChatMessages" role="log" aria-live="polite" aria-label="Translation messages"></div>
         <div class="chat-input-row">
-          <input class="chat-input" id="langChatInput" placeholder="Type in any language..."/>
-          <button class="btn btn-primary btn-sm" onclick="window.StadiumApp.sendLangChat()">Translate</button>
+          <label for="langChatInput" class="sr-only">Type message in any language for translation</label>
+          <input class="chat-input" id="langChatInput" placeholder="Type in any language..." maxlength="500"/>
+          <button class="btn btn-primary btn-sm" onclick="window.StadiumApp.sendLangChat()" aria-label="Translate message">Translate</button>
         </div>
       </div>
     </div>
     <div class="card">
       <div class="card-title">👥 Staff↔Fan Bridge</div>
-      <div class="chat-panel">
-        <div class="chat-messages" id="bridgeChatMessages"></div>
+      <div class="chat-panel" role="region" aria-label="Staff to fan translation bridge">
+        <div class="chat-messages" id="bridgeChatMessages" role="log" aria-live="polite" aria-label="Bridge messages"></div>
         <div class="chat-input-row">
-          <input class="chat-input" id="bridgeChatInput" placeholder="Staff message (auto-translated)..."/>
-          <button class="btn btn-success btn-sm" onclick="window.StadiumApp.sendBridgeChat()">Send</button>
+          <label for="bridgeChatInput" class="sr-only">Staff message for auto-translation</label>
+          <input class="chat-input" id="bridgeChatInput" placeholder="Staff message (auto-translated)..." maxlength="500"/>
+          <button class="btn btn-success btn-sm" onclick="window.StadiumApp.sendBridgeChat()" aria-label="Send translated message">Send</button>
         </div>
       </div>
     </div>
@@ -230,36 +250,38 @@
 </section>
 
 <!-- PAGE: OPS DASHBOARD -->
-<section class="page" id="page-ops">
+<section class="page" id="page-ops" role="region" aria-label="Operational Intelligence Dashboard">
   <div class="page-header">
-    <h1>🖥️ Operational Intelligence</h1>
+    <h1 tabindex="-1">🖥️ Operational Intelligence</h1>
     <p>Unified operational dashboard for staff and organizers</p>
   </div>
-  <div class="stats-grid" id="opsStats"></div>
+  <div class="stats-grid" id="opsStats" aria-live="polite" aria-label="Operations statistics"></div>
   <div class="grid-2" style="margin-bottom:16px">
     <div class="card">
       <div class="card-title">🤖 AI Operational Briefings</div>
-      <div id="opsBriefings" style="max-height:340px;overflow-y:auto"></div>
+      <div id="opsBriefings" style="max-height:340px;overflow-y:auto" role="feed" aria-label="AI operational briefings"></div>
     </div>
     <div class="card">
       <div class="card-title">📋 Incident Log</div>
-      <div id="opsIncidents" style="max-height:340px;overflow-y:auto"></div>
+      <div id="opsIncidents" style="max-height:340px;overflow-y:auto" role="list" aria-label="Incident log"></div>
     </div>
   </div>
   <div class="card" style="margin-bottom:16px">
     <div class="card-title">🔍 Natural Language Query</div>
     <div class="search-box">
-      <span>🤖</span>
-      <input id="opsQueryInput" placeholder="Ask anything about operations... e.g. 'Which zone has the highest crowd density?'"/>
+      <span aria-hidden="true">🤖</span>
+      <label for="opsQueryInput" class="sr-only">Natural language operational query</label>
+      <input id="opsQueryInput" placeholder="Ask anything about operations... e.g. 'Which zone has the highest crowd density?'" maxlength="500" aria-describedby="opsQueryHint"/>
     </div>
-    <button class="btn btn-primary" onclick="window.StadiumApp.opsQuery()">Ask AI</button>
-    <div id="opsQueryResult" style="margin-top:12px"></div>
+    <div id="opsQueryHint" class="sr-only">Enter a natural language question about crowd, incidents, energy, transport, or history for AI analysis</div>
+    <button class="btn btn-primary" onclick="window.StadiumApp.opsQuery()" aria-label="Submit AI query">Ask AI</button>
+    <div id="opsQueryResult" style="margin-top:12px" aria-live="polite" role="region" aria-label="AI query result"></div>
   </div>
   <div class="card">
     <div class="card-title">📜 Audit Trail (90-day retention)</div>
     <div style="max-height:260px;overflow-y:auto">
-      <table class="audit-table">
-        <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Zone</th><th>Details</th></tr></thead>
+      <table class="audit-table" aria-label="Audit trail log">
+        <thead><tr><th scope="col">Timestamp</th><th scope="col">User</th><th scope="col">Action</th><th scope="col">Zone</th><th scope="col">Details</th></tr></thead>
         <tbody id="auditBody"></tbody>
       </table>
     </div>
@@ -267,20 +289,20 @@
 </section>
 
 <!-- PAGE: DECISION ENGINE -->
-<section class="page" id="page-decision">
+<section class="page" id="page-decision" role="region" aria-label="Real-Time Decision Support">
   <div class="page-header">
-    <h1>⚡ Real-Time Decision Support</h1>
+    <h1 tabindex="-1">⚡ Real-Time Decision Support</h1>
     <p>AI-generated prioritized recommendations during high-pressure operations</p>
   </div>
-  <div class="stats-grid" id="decisionStats"></div>
+  <div class="stats-grid" id="decisionStats" aria-live="polite" aria-label="Decision engine statistics"></div>
   <div class="grid-2">
     <div class="card">
       <div class="card-title">🚨 Active Incidents</div>
-      <div id="decisionIncidents" style="max-height:500px;overflow-y:auto"></div>
+      <div id="decisionIncidents" style="max-height:500px;overflow-y:auto" role="list" aria-live="polite" aria-label="Active incidents for decision support"></div>
     </div>
     <div class="card">
       <div class="card-title">🤖 AI Recommendations</div>
-      <div id="decisionRecs" style="max-height:500px;overflow-y:auto"></div>
+      <div id="decisionRecs" style="max-height:500px;overflow-y:auto" role="list" aria-live="polite" aria-label="AI generated recommendations"></div>
     </div>
   </div>
 </section>

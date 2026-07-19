@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Smart Stadium Operations — Test Suite</title>
+  <meta name="description" content="Comprehensive test suite for Smart Stadium Operations platform — FIFA World Cup 2026"/>
+  <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    .test-runner { max-width: 900px; margin: 40px auto; padding: 24px; }
+    .test-runner h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; color: #f1f5f9; }
+  </style>
+</head>
+<body>
+<!-- Must include full app HTML for DOM tests -->
+<a href="#mainContent" class="sr-only sr-only-focusable" id="skipLink">Skip to main content</a>
+<div class="bg-mesh" aria-hidden="true"></div>
+<div class="app-container">
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+  <div class="sidebar-header"><div class="sidebar-logo"><div class="logo-icon" aria-hidden="true">⚽</div><span>Smart Stadium</span></div><div class="sidebar-subtitle">FIFA World Cup 2026</div></div>
+  <nav class="sidebar-nav" aria-label="Module navigation">
+    <div class="nav-section-label" id="fanServicesLabel">Fan Services</div>
+    <div role="group" aria-labelledby="fanServicesLabel">
+      <button class="nav-item active" data-page="overview" aria-current="page" aria-label="Operations Overview"><span class="nav-icon" aria-hidden="true">📊</span>Overview</button>
+      <button class="nav-item" data-page="navigation" aria-label="Fan Navigation"><span class="nav-icon" aria-hidden="true">🗺️</span>Fan Navigation</button>
+      <button class="nav-item" data-page="accessibility" aria-label="Accessibility"><span class="nav-icon" aria-hidden="true">♿</span>Accessibility</button>
+      <button class="nav-item" data-page="transport" aria-label="Transportation"><span class="nav-icon" aria-hidden="true">🚌</span>Transportation</button>
+      <button class="nav-item" data-page="language" aria-label="Multilingual"><span class="nav-icon" aria-hidden="true">🌍</span>Multilingual</button>
+    </div>
+    <div class="nav-section-label" id="opsLabel">Operations</div>
+    <div role="group" aria-labelledby="opsLabel">
+      <button class="nav-item" data-page="crowd" aria-label="Crowd Management"><span class="nav-icon" aria-hidden="true">👥</span>Crowd Mgmt<span class="nav-badge" id="crowdBadge" aria-label="alerts">0</span></button>
+      <button class="nav-item" data-page="sustainability" aria-label="Sustainability"><span class="nav-icon" aria-hidden="true">🌱</span>Sustainability</button>
+      <button class="nav-item" data-page="ops" aria-label="Ops Dashboard"><span class="nav-icon" aria-hidden="true">🖥️</span>Ops Dashboard</button>
+      <button class="nav-item" data-page="decision" aria-label="Decision Engine"><span class="nav-icon" aria-hidden="true">⚡</span>Decision Engine<span class="nav-badge" id="decisionBadge" aria-label="active incidents">0</span></button>
+    </div>
+  </nav>
+  <div class="sidebar-footer" role="status" aria-live="polite"><div><span class="live-dot" aria-hidden="true"></span>TEST MODE</div></div>
+</aside>
+<main class="main-content" id="mainContent" role="main" aria-label="Test runner">
+  <section class="page active" id="page-overview" role="region" aria-label="Overview">
+    <div class="page-header"><h1 tabindex="-1">🧪 Test Suite — Smart Stadium Operations</h1><p>Comprehensive tests for all 9 requirements + code quality + security + accessibility</p></div>
+    <div class="stats-grid" id="overviewStats" aria-live="polite"></div>
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="card"><div class="card-title" id="crowdChartLabel">Chart</div><div class="chart-container" role="img" aria-labelledby="crowdChartLabel"><canvas id="chartCrowdTrend" aria-label="Chart"></canvas></div></div>
+      <div class="card"><div class="card-title" id="energyChartLabel">Chart</div><div class="chart-container" role="img" aria-labelledby="energyChartLabel"><canvas id="chartEnergyTrend" aria-label="Chart"></canvas></div></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="card"><div class="card-title">Incidents</div><div class="alert-list" id="overviewIncidents" role="list" aria-live="polite"></div></div>
+      <div class="card"><div class="card-title">Briefing</div><div class="briefing-card" id="overviewBriefing" role="article" aria-live="polite"></div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card"><div class="card-title">Services</div><div id="serviceStatusPanel" role="list" aria-live="polite"></div></div>
+      <div class="card"><div class="card-title">AI Provider</div><div id="aiProviderStatus" role="status" aria-live="polite"></div></div>
+    </div>
+  </section>
+  <!-- Hidden pages for DOM tests -->
+  <section class="page" id="page-navigation" role="region" aria-label="Navigation"><div class="page-header"><h1 tabindex="-1">Nav</h1></div>
+    <div class="search-box"><span aria-hidden="true">📍</span><label for="navSearchInput" class="sr-only">Destination</label><input type="text" id="navSearchInput" maxlength="500" aria-describedby="navSearchHint"/></div>
+    <div id="navSearchHint" class="sr-only">Hint</div>
+    <div class="toggle-row"><button class="toggle" id="accessibleRouteToggle" role="switch" aria-checked="false" tabindex="0"></button><span class="toggle-label">Accessible</span></div>
+    <div class="toggle-row"><button class="toggle" id="offlineToggle" role="switch" aria-checked="false" tabindex="0"></button><span class="toggle-label">Offline</span></div>
+    <div id="navRouteResult" aria-live="polite"></div><div id="navPOIList" role="list"></div>
+  </section>
+  <section class="page" id="page-crowd" role="region" aria-label="Crowd"><div class="page-header"><h1 tabindex="-1">Crowd</h1></div>
+    <div id="crowdStats" aria-live="polite"></div><div id="zoneHeatmap" role="grid"></div>
+    <div class="chart-container" role="img"><canvas id="chartSurgePred"></canvas></div>
+    <div id="crowdAlerts" role="list" aria-live="assertive"></div>
+  </section>
+  <section class="page" id="page-accessibility" role="region" aria-label="Accessibility"><div class="page-header"><h1 tabindex="-1">A11y</h1></div>
+    <div id="a11yStats" aria-live="polite"></div>
+    <table class="infra-table" aria-label="Infrastructure"><thead><tr><th scope="col">Facility</th><th scope="col">Type</th><th scope="col">Zone</th><th scope="col">Status</th></tr></thead><tbody id="infraBody"></tbody></table>
+    <div id="a11yAlerts" role="list" aria-live="polite"></div>
+    <div class="chat-panel" role="region" aria-label="A11y chat"><div class="chat-messages" id="a11yChatMessages" role="log" aria-live="polite"></div>
+    <div class="chat-input-row"><label for="a11yChatInput" class="sr-only">Ask</label><input class="chat-input" id="a11yChatInput" maxlength="500"/></div></div>
+  </section>
+  <section class="page" id="page-transport" role="region" aria-label="Transport"><div class="page-header"><h1 tabindex="-1">Transport</h1></div>
+    <div id="transportStats" aria-live="polite"></div><div id="transportOptions" role="list"></div><div id="departureRecs" aria-live="polite"></div>
+    <label for="journeyFrom" class="sr-only">From</label><input id="journeyFrom" maxlength="500"/>
+    <label for="journeySeat" class="sr-only">Seat</label><input id="journeySeat" maxlength="500"/>
+    <div id="journeyResult" aria-live="polite"></div>
+  </section>
+  <section class="page" id="page-sustainability" role="region" aria-label="Sustainability"><div class="page-header"><h1 tabindex="-1">Sustain</h1></div>
+    <div id="sustainStats" aria-live="polite"></div>
+    <div class="chart-container" role="img"><canvas id="chartEnergyZone"></canvas></div>
+    <div class="chart-container" role="img"><canvas id="chartWaste"></canvas></div>
+    <div id="ecoRecommendations" role="list" aria-live="polite"></div><div id="sustainAlerts" role="list" aria-live="polite"></div>
+  </section>
+  <section class="page" id="page-language" role="region" aria-label="Language"><div class="page-header"><h1 tabindex="-1">Lang</h1></div>
+    <div id="langStats" aria-live="polite"></div><div id="langGrid" role="radiogroup"></div>
+    <div class="chat-panel" role="region" aria-label="Lang chat"><div class="chat-messages" id="langChatMessages" role="log" aria-live="polite"></div>
+    <div class="chat-input-row"><label for="langChatInput" class="sr-only">Type</label><input class="chat-input" id="langChatInput" maxlength="500"/></div></div>
+    <div class="chat-panel" role="region" aria-label="Bridge"><div class="chat-messages" id="bridgeChatMessages" role="log" aria-live="polite"></div>
+    <div class="chat-input-row"><label for="bridgeChatInput" class="sr-only">Staff msg</label><input class="chat-input" id="bridgeChatInput" maxlength="500"/></div></div>
+  </section>
+  <section class="page" id="page-ops" role="region" aria-label="Ops"><div class="page-header"><h1 tabindex="-1">Ops</h1></div>
+    <div id="opsStats" aria-live="polite"></div><div id="opsBriefings" role="feed"></div><div id="opsIncidents" role="list"></div>
+    <label for="opsQueryInput" class="sr-only">Query</label><input id="opsQueryInput" maxlength="500" aria-describedby="opsQueryHint"/>
+    <div id="opsQueryHint" class="sr-only">Hint</div><div id="opsQueryResult" aria-live="polite"></div>
+    <table class="audit-table" aria-label="Audit"><thead><tr><th scope="col">Time</th><th scope="col">User</th><th scope="col">Action</th><th scope="col">Zone</th><th scope="col">Details</th></tr></thead><tbody id="auditBody"></tbody></table>
+  </section>
+  <section class="page" id="page-decision" role="region" aria-label="Decision"><div class="page-header"><h1 tabindex="-1">Decision</h1></div>
+    <div id="decisionStats" aria-live="polite"></div><div id="decisionIncidents" role="list" aria-live="polite"></div><div id="decisionRecs" role="list" aria-live="polite"></div>
+  </section>
+  <!-- Test Results -->
+  <div class="card" style="margin-top:24px"><div class="card-title">🧪 Test Results</div><div id="testResultsContainer" aria-live="polite">Running tests...</div></div>
+</main>
+</div>
+<script src="data.js"></script>
+<script src="render.js"></script>
+<script src="app.js"></script>
+<script src="tests.js"></script>
+</body>
+</html>
