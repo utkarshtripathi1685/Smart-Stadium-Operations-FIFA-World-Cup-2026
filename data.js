@@ -183,7 +183,7 @@ const SERVICE_STATUS = [
 ];
 
 // ---- AI PROVIDER STATUS (Req 9.3 — failover chain) ----
-/** @type {{primary:string,secondary:string,activeProv:string,availability:number,failCount:number}} */
+/** @type {{primary:string,secondary:string,tertiary:string,activeProv:string,availability:number,failCount:number}} */
 const AI_PROVIDER = {
   primary: 'AWS Bedrock',
   secondary: 'Azure OpenAI',
@@ -207,6 +207,11 @@ const SimState = {
   langMessages: [],
   bridgeMessages: [],
   a11yMessages: [],
+  userProfile: { accessibilityNeed: null },
+  sentAlerts: {},
+  sustainAlerts: [],
+  lastZoneMetrics: {},
+  actionedIncidents: {},
   /** @type {number|null} Tick interval ID */
   tickIntervalId: null,
   /** @type {number|null} Briefing interval ID */
@@ -229,16 +234,143 @@ function initZones() {
 }
 
 /**
+ * Run crowd management occupancy checks and alert routing (Req 2.2).
+ * Prevents duplicate warnings unless occupancy drops below 75% first.
+ */
+function checkCrowdAlerts() {
+  const now = new Date();
+  ZONES.forEach(z => {
+    const pct = z.current / z.threshold;
+    const currentState = SimState.sentAlerts[z.id] || null;
+
+    if (pct >= OCCUPANCY_CRITICAL_PCT) {
+      if (currentState !== 'critical') {
+        SimState.sentAlerts[z.id] = 'critical';
+        const alertText = `🚨 CRITICAL: ${z.name} occupancy is at ${Math.round(pct * 100)}% — immediate evacuation/redirect required.`;
+        SimState.alerts.unshift({ id: `crowd-crit-${z.id}`, text: alertText, cls: 'critical', time: now });
+        addAuditEntry('Crowd_Monitor', 'Critical Alert', z.name, alertText);
+      }
+    } else if (pct >= OCCUPANCY_WARNING_PCT) {
+      if (!currentState) {
+        SimState.sentAlerts[z.id] = 'warning';
+        const alertText = `⚠️ WARNING: ${z.name} occupancy is at ${Math.round(pct * 100)}% — approaching threshold.`;
+        SimState.alerts.unshift({ id: `crowd-warn-${z.id}`, text: alertText, cls: '', time: now });
+        addAuditEntry('Crowd_Monitor', 'Warning Alert', z.name, alertText);
+      }
+    } else if (pct < 0.75) {
+      if (currentState) {
+        delete SimState.sentAlerts[z.id];
+        addAuditEntry('Crowd_Monitor', 'Alert Recovery', z.name, `Occupancy recovered below 75% (${Math.round(pct * 100)}%)`);
+      }
+    }
+  });
+}
+
+/**
+ * Run sustainability metrics validation checks (Req 5.3, 5.6, 5.7).
+ * Monitors zone energy, waste bin capacity, and sensor status.
+ */
+function checkSustainabilityMetrics() {
+  const now = new Date();
+  
+  // 1. Energy monitoring
+  ZONES.forEach(z => {
+    const baseline = Math.floor(z.threshold * 0.8);
+    const currentEnergy = Math.floor(z.current * 0.9);
+    const excessPct = ((currentEnergy - baseline) / baseline) * 100;
+    
+    if (excessPct >= 20) {
+      const alertId = `sustain-energy-${z.id}`;
+      if (!SimState.sustainAlerts.some(a => a.id === alertId)) {
+        SimState.sustainAlerts.unshift({
+          id: alertId,
+          type: 'energy',
+          text: `⚠️ Energy consumption in ${z.name} is ${Math.round(excessPct)}% above baseline — Alert delivered to Staff-A`,
+          time: now,
+          status: 'Assigned',
+          assignedTo: 'Staff-A',
+          escalated: false
+        });
+        addAuditEntry('System', 'Energy Alert', z.name, `Energy consumption ${Math.round(excessPct)}% above baseline`);
+      } else {
+        // Escalate after 10s (simulating 5 minutes SLA in fast simulation mode)
+        const alert = SimState.sustainAlerts.find(a => a.id === alertId);
+        if (alert && alert.status === 'Assigned' && (now - alert.time) >= 10000 && !alert.escalated) {
+          alert.escalated = true;
+          alert.text = `🚨 ESCALATED: Energy consumption in ${z.name} is ${Math.round(excessPct)}% above baseline — Staff-A unreachable. Escalated to Venue Supervisor.`;
+          addAuditEntry('System', 'Energy Escalation', z.name, 'Staff-A unreachable, escalated to Supervisor');
+        }
+      }
+    }
+  });
+
+  // 2. Waste monitoring (high traffic zones: Food Court, Gate A)
+  const highTraffic = ['food-court', 'gate-a'];
+  highTraffic.forEach(zoneId => {
+    const z = ZONES.find(x => x.id === zoneId);
+    if (z) {
+      // Simulate waste levels rising with occupancy
+      const wastePct = Math.min(100, Math.round((z.current / z.threshold) * 110));
+      if (wastePct >= 90) {
+        const alertId = `sustain-waste-${z.id}`;
+        if (!SimState.sustainAlerts.some(a => a.id === alertId)) {
+          SimState.sustainAlerts.unshift({
+            id: alertId,
+            type: 'waste',
+            text: `⚠️ Waste bin in ${z.name} is at ${wastePct}% capacity — Assigned to Staff-B`,
+            time: now,
+            status: 'Assigned',
+            assignedTo: 'Staff-B',
+            escalated: false
+          });
+          addAuditEntry('System', 'Waste Alert', z.name, `Waste bin at ${wastePct}% capacity`);
+        } else {
+          const alert = SimState.sustainAlerts.find(a => a.id === alertId);
+          if (alert && alert.status === 'Assigned' && (now - alert.time) >= 10000 && !alert.escalated) {
+            alert.escalated = true;
+            alert.text = `🚨 ESCALATED: Waste bin in ${z.name} at ${wastePct}% capacity — Staff-B unavailable. Escalated to Zone Supervisor.`;
+            addAuditEntry('System', 'Waste Escalation', z.name, 'Staff-B unavailable, escalated to Supervisor');
+          }
+        }
+      }
+    }
+  });
+
+  // 3. IoT sensor staleness monitoring (simulate occasional sensor missed intervals)
+  SERVICE_STATUS.forEach(s => {
+    if (s.name === 'Sustainability_Monitor' && Math.random() < 0.15) {
+      s.stale = true;
+      const alertId = 'sustain-sensor-stale';
+      if (!SimState.sustainAlerts.some(a => a.id === alertId)) {
+        SimState.sustainAlerts.unshift({
+          id: alertId,
+          type: 'sensor',
+          text: `⚠️ IoT Sensor SN-842 in Concourse 2 failed to report for 2 intervals — Staleness indicator active`,
+          time: now,
+          status: 'Active',
+          escalated: false
+        });
+        addAuditEntry('System', 'Sensor Staleness', 'Concourse 2', 'Sensor SN-842 inactive for 2 intervals');
+      }
+    }
+  });
+}
+
+/**
  * Simulate one tick of zone occupancy changes.
  * Each zone randomly increases or decreases slightly, clamped to safe bounds.
  */
 function tickZones() {
   ZONES.forEach(function(z) {
-    var delta = Math.floor((Math.random() - ZONE_TICK_BIAS) * z.threshold * ZONE_TICK_DELTA_FACTOR);
+    const delta = Math.floor((Math.random() - ZONE_TICK_BIAS) * z.threshold * ZONE_TICK_DELTA_FACTOR);
     z.current = Math.max(ZONE_MIN_OCCUPANCY, Math.min(z.threshold * ZONE_OVERSHOOT_MULTIPLIER, z.current + delta));
   });
   // Update service timestamps
   SERVICE_STATUS.forEach(function(s) { s.lastUpdate = new Date(); s.stale = false; });
+
+  // Run dynamic validation checks
+  checkCrowdAlerts();
+  checkSustainabilityMetrics();
 }
 
 /**
@@ -246,9 +378,9 @@ function tickZones() {
  * Creates 3 incidents: 2 active and 1 resolved.
  */
 function initIncidents() {
-  var now = new Date();
-  for (var i = 0; i < 3; i++) {
-    var t = INCIDENT_TEMPLATES[i];
+  const now = new Date();
+  for (let i = 0; i < 3; i++) {
+    const t = INCIDENT_TEMPLATES[i];
     SimState.incidents.push({
       id: 'INC-' + (1001 + i),
       type: t.type,
@@ -280,6 +412,7 @@ function addAuditEntry(user, action, zone, details) {
     zone: sanitizeHTML(truncateInput(String(zone))),
     details: sanitizeHTML(truncateInput(String(details))),
   });
+
   if (SimState.auditLog.length > MAX_AUDIT_LOG_ENTRIES) {
     SimState.auditLog.pop();
   }
@@ -321,7 +454,7 @@ function getZoneOccupancyPct(zone) {
  */
 function getAvgOccupancy() {
   if (ZONES.length === 0) return 0;
-  var total = ZONES.reduce(function(s, z) { return s + z.current / z.threshold; }, 0);
+  const total = ZONES.reduce(function(s, z) { return s + z.current / z.threshold; }, 0);
   return Math.round(total / ZONES.length * 100);
 }
 
@@ -331,15 +464,15 @@ function getAvgOccupancy() {
  * @returns {Array} Cross-domain incident groups.
  */
 function detectCrossDomainIncidents() {
-  var active = SimState.incidents.filter(function(i) { return i.status === 'Active'; });
-  var domainMap = {};
+  const active = SimState.incidents.filter(function(i) { return i.status === 'Active'; });
+  const domainMap = {};
   active.forEach(function(inc) {
     if (!domainMap[inc.zone]) domainMap[inc.zone] = [];
     domainMap[inc.zone].push(inc);
   });
-  var crossDomain = [];
+  const crossDomain = [];
   Object.keys(domainMap).forEach(function(zone) {
-    var domains = new Set(domainMap[zone].map(function(i) { return i.domain; }));
+    const domains = new Set(domainMap[zone].map(function(i) { return i.domain; }));
     if (domains.size >= 2) {
       crossDomain.push({ zone: zone, incidents: domainMap[zone], domains: Array.from(domains) });
     }

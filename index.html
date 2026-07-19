@@ -134,6 +134,20 @@
     <h1 tabindex="-1">♿ Accessibility Support</h1>
     <p>Infrastructure status, accessible routing, and accommodation services</p>
   </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">👤 Register Accessibility Profile</div>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <label for="a11yProfileSelect" style="font-weight:500">Select accommodation need:</label>
+      <select id="a11yProfileSelect" class="chat-input" style="max-width:300px;background:rgba(255,255,255,0.05);color:var(--text-primary);border:1px solid rgba(255,255,255,0.1);padding:6px 12px;border-radius:4px" onchange="window.StadiumApp.registerA11yNeed(this.value)">
+        <option value="none">None / Standard</option>
+        <option value="mobility">♿ Mobility Impairment (Ramps, Elevators)</option>
+        <option value="visual">👁️ Visual Impairment (Audio directions)</option>
+        <option value="hearing">👂 Hearing Impairment (On-screen text notifications)</option>
+        <option value="cognitive">🧠 Cognitive Support (Simplified navigation)</option>
+      </select>
+      <span id="a11yProfileStatus" style="font-size:0.9rem;color:var(--accent-green);font-weight:600">Active Profile: Standard</span>
+    </div>
+  </div>
   <div class="stats-grid" id="a11yStats" aria-live="polite" aria-label="Accessibility statistics"></div>
   <div class="grid-2" style="margin-bottom:16px">
     <div class="card">
@@ -232,6 +246,10 @@
           <label for="langChatInput" class="sr-only">Type message in any language for translation</label>
           <input class="chat-input" id="langChatInput" placeholder="Type in any language..." maxlength="500"/>
           <button class="btn btn-primary btn-sm" onclick="window.StadiumApp.sendLangChat()" aria-label="Translate message">Translate</button>
+        </div>
+        <div class="chat-input-row" style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; display: flex; align-items: center; justify-content: space-between;">
+          <button class="btn btn-outline btn-sm" id="btnVoiceSim" onclick="window.StadiumApp.simulateVoiceQuery()" aria-label="Simulate Voice Input Query" style="display: inline-flex; align-items: center; gap: 6px;">🎙️ Simulate Voice Query</button>
+          <span id="voiceQueryStatus" style="font-size:0.85rem;color:var(--text-secondary)">Status: Idle</span>
         </div>
       </div>
     </div>

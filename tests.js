@@ -7,7 +7,7 @@
    ============================================================ */
 'use strict';
 
-var testResults = { passed: 0, failed: 0, total: 0, details: [] };
+const testResults = { passed: 0, failed: 0, total: 0, details: [] };
 
 function assert(condition, testName) {
   testResults.total++;
@@ -49,7 +49,7 @@ function runAllTests() {
   assert(ZONES.every(function(z) { return z.current > 0 && z.current <= z.threshold; }), 'initZones sets occupancy within [0, threshold]');
 
   // Zone tick simulation
-  var prevValues = ZONES.map(function(z) { return z.current; });
+  const prevValues = ZONES.map(function(z) { return z.current; });
   tickZones();
   assert(ZONES.every(function(z) { return z.current >= ZONE_MIN_OCCUPANCY; }), 'tickZones respects ZONE_MIN_OCCUPANCY floor');
   assert(ZONES.every(function(z) { return z.current <= z.threshold * ZONE_OVERSHOOT_MULTIPLIER; }), 'tickZones respects ZONE_OVERSHOOT_MULTIPLIER ceiling');
@@ -112,7 +112,7 @@ function runAllTests() {
 
   // Truncate input
   assertEqual(truncateInput('short'), 'short', 'truncateInput preserves short strings');
-  var longInput = 'a'.repeat(600);
+  const longInput = 'a'.repeat(600);
   assertEqual(truncateInput(longInput).length, MAX_INPUT_LENGTH, 'truncateInput truncates to MAX_INPUT_LENGTH');
   assertEqual(truncateInput(null), '', 'truncateInput handles null');
   assertEqual(truncateInput(undefined), '', 'truncateInput handles undefined');
@@ -129,8 +129,8 @@ function runAllTests() {
   assert(SimState.incidents.every(function(i) { return i.confidences && i.confidences.length === 5; }), 'All incidents have 5 confidence scores');
 
   // Confidence threshold (Req 8.5)
-  var lowConfIncident = SimState.incidents[0];
-  var belowThreshold = lowConfIncident.confidences.filter(function(c) { return c < CONFIDENCE_THRESHOLD; });
+  const lowConfIncident = SimState.incidents[0];
+  const belowThreshold = lowConfIncident.confidences.filter(function(c) { return c < CONFIDENCE_THRESHOLD; });
   assert(belowThreshold.length > 0, 'Some confidence scores are below threshold (require human review)');
 
   // ========== AUDIT LOG TESTS ==========
@@ -142,7 +142,7 @@ function runAllTests() {
 
   // FIFO eviction
   SimState.auditLog = [];
-  for (var i = 0; i < 55; i++) { addAuditEntry('User' + i, 'Action', 'Zone', 'Details'); }
+  for (let i = 0; i < 55; i++) { addAuditEntry('User' + i, 'Action', 'Zone', 'Details'); }
   assertEqual(SimState.auditLog.length, MAX_AUDIT_LOG_ENTRIES, 'Audit log respects MAX_AUDIT_LOG_ENTRIES limit');
 
   // XSS prevention in audit entries
@@ -151,7 +151,7 @@ function runAllTests() {
   assert(!SimState.auditLog[0].user.includes('<script>'), 'Audit entry sanitizes user field');
 
   // ========== TIME FORMATTING TESTS ==========
-  var testDate = new Date('2026-07-18T14:30:45');
+  const testDate = new Date('2026-07-18T14:30:45');
   assert(typeof formatTime(testDate) === 'string' && formatTime(testDate).length > 0, 'formatTime returns non-empty string');
   assert(typeof formatTimeShort(testDate) === 'string' && formatTimeShort(testDate).length > 0, 'formatTimeShort returns non-empty string');
   assertEqual(formatTime('not a date'), '--:--:--', 'formatTime handles invalid input');
@@ -159,7 +159,7 @@ function runAllTests() {
   assertEqual(formatTime(new Date('invalid')), '--:--:--', 'formatTime handles NaN date');
 
   // ========== ZONE OCCUPANCY HELPER TESTS ==========
-  var testZone = { current: 2000, threshold: 2500 };
+  const testZone = { current: 2000, threshold: 2500 };
   assertEqual(getZoneOccupancyPct(testZone), 80, 'getZoneOccupancyPct calculates 80%');
   assertEqual(getZoneOccupancyPct({ current: 0, threshold: 100 }), 0, 'getZoneOccupancyPct handles 0%');
   assertEqual(getZoneOccupancyPct({ current: 100, threshold: 100 }), 100, 'getZoneOccupancyPct handles 100%');
@@ -172,19 +172,19 @@ function runAllTests() {
 
   // ========== CROSS-DOMAIN DETECTION TESTS (Req 8.2) ==========
   assert(typeof detectCrossDomainIncidents === 'function', 'detectCrossDomainIncidents function exists');
-  var crossDomain = detectCrossDomainIncidents();
+  const crossDomain = detectCrossDomainIncidents();
   assert(Array.isArray(crossDomain), 'detectCrossDomainIncidents returns array');
 
   // ========== RENDER HELPER TESTS ==========
   assert(typeof buildStatCard === 'function', 'buildStatCard function exists');
-  var card = buildStatCard('blue', 'Test Label', '42', 'Test change');
+  const card = buildStatCard('blue', 'Test Label', '42', 'Test change');
   assertContains(card, 'stat-card', 'buildStatCard produces stat-card class');
   assertContains(card, 'blue', 'buildStatCard includes color class');
   assertContains(card, 'Test Label', 'buildStatCard includes label');
   assertContains(card, '42', 'buildStatCard includes value');
 
   assert(typeof buildAlertItem === 'function', 'buildAlertItem function exists');
-  var alert = buildAlertItem('12:00', 'Test alert', 'critical');
+  const alert = buildAlertItem('12:00', 'Test alert', 'critical');
   assertContains(alert, 'alert-item', 'buildAlertItem produces alert-item class');
   assertContains(alert, 'critical', 'buildAlertItem includes CSS class');
 
@@ -254,30 +254,116 @@ function runAllTests() {
   assert(document.querySelectorAll('th[scope="col"]').length >= 5, 'A11y: Table headers have scope');
 
   // Focus management
-  var focusableH1s = document.querySelectorAll('h1[tabindex="-1"]');
+  const focusableH1s = document.querySelectorAll('h1[tabindex="-1"]');
   assert(focusableH1s.length >= 5, 'A11y: Page headings are programmatically focusable');
 
   // ========== SECURITY DOM TESTS ==========
-  var cspMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+  const cspMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
   assert(cspMeta !== null, 'Security: CSP meta tag present');
-  var noSniff = document.querySelector('meta[http-equiv="X-Content-Type-Options"]');
+  const noSniff = document.querySelector('meta[http-equiv="X-Content-Type-Options"]');
   assert(noSniff !== null, 'Security: X-Content-Type-Options meta present');
-  var chartScript = document.querySelector('script[crossorigin]');
+  const chartScript = document.querySelector('script[crossorigin]');
   assert(chartScript !== null, 'Security: CDN script has crossorigin attribute');
   assert(document.querySelectorAll('input[maxlength]').length >= 5, 'Security: Inputs have maxlength');
+
+  // ========== DYNAMIC OPTIMIZATION TESTS (NEW) ==========
+  // 1. Accessibility accommodations (Req 3)
+  window.StadiumApp.registerA11yNeed('mobility');
+  assertEqual(SimState.userProfile.accessibilityNeed, 'mobility', 'Accommodation need registers mobility');
+  const a11yToggle = document.getElementById('accessibleRouteToggle');
+  assertEqual(a11yToggle.classList.contains('on'), true, 'Mobility registration auto-enables accessible routing toggle');
+
+  // 2. Congestion route recalculation & local waiting (Req 1.3)
+  SimState.currentZone = 'Gate B';
+  document.getElementById('navSearchInput').value = 'Nearest Restroom';
+  window.StadiumApp.generateRoute();
+  
+  // Set Concourse 1 occupancy high (>=80%) to trigger congestion recalculation
+  const concourse1 = ZONES.find(z => z.name === 'Concourse 1');
+  const originalOcc = concourse1.current;
+  concourse1.current = Math.round(concourse1.threshold * 0.85);
+  checkRouteCongestion();
+  const routeEl = document.getElementById('navRouteResult');
+  assertContains(routeEl.innerHTML, 'Bypassing congested Concourse 1/2', 'Bypasses congested zones automatically');
+
+  // Set alternate path zone VIP Lounge high as well (>=80%)
+  const vipL = ZONES.find(z => z.name === 'VIP Lounge');
+  const originalVipOcc = vipL.current;
+  vipL.current = Math.round(vipL.threshold * 0.90);
+  checkRouteCongestion();
+  assertContains(routeEl.innerHTML, 'recommends waiting at your current location', 'Recommends waiting if all options are congested');
+  
+  // Restore occupancy back to safe levels
+  concourse1.current = originalOcc;
+  vipL.current = originalVipOcc;
+
+  // 3. Transport Disruption alternative options (Req 4.5)
+  window.StadiumApp.selectTransit('NJ Transit Rail');
+  assertEqual(SimState.selectedTransport, 'NJ Transit Rail', 'Transit option selection works');
+  
+  const njTransit = TRANSPORT_OPTIONS.find(t => t.name === 'NJ Transit Rail');
+  const origNjtStatus = njTransit.status;
+  njTransit.status = 'Delayed';
+  checkTransportStatus();
+  const transportRecs = document.getElementById('departureRecs');
+  assertContains(transportRecs.innerHTML, 'Transport Disruption Alternative Routing Plan', 'Disruption alert is generated with alternative routes');
+  njTransit.status = origNjtStatus;
+
+  // 4. Decision Engine feedback loop >10% metric shift (Req 8.3)
+  const testInc = SimState.incidents.find(i => i.status === 'Active');
+  if (testInc) {
+    const zone = ZONES.find(z => z.name === testInc.zone);
+    const originalZoneOcc = zone.current;
+    window.StadiumApp.actionRecommendation(testInc.id, 0);
+    assertEqual(SimState.actionedIncidents[testInc.id], 0, 'Recommendation actioning is recorded');
+    assert(zone.current < originalZoneOcc, 'Relevant zone metric reduced on actioned recommendation');
+    zone.current = originalZoneOcc;
+  }
+
+  // 5. Crowd warning alerts duplicate suppression (Req 2.2)
+  SimState.sentAlerts = {};
+  SimState.alerts = [];
+  const testZoneObj = ZONES[0];
+  const origZoneVal = testZoneObj.current;
+  
+  testZoneObj.current = Math.round(testZoneObj.threshold * 0.82);
+  checkCrowdAlerts();
+  assertEqual(SimState.sentAlerts[testZoneObj.id], 'warning', 'Crowd alert warning state set');
+  const countAfterWarn = SimState.alerts.length;
+  
+  checkCrowdAlerts();
+  assertEqual(SimState.alerts.length, countAfterWarn, 'Crowd alert warning is suppressed (no duplicates)');
+  
+  testZoneObj.current = Math.round(testZoneObj.threshold * 0.78);
+  checkCrowdAlerts();
+  assertEqual(SimState.sentAlerts[testZoneObj.id], 'warning', 'Warning state remains active between 75% and 80%');
+  
+  testZoneObj.current = Math.round(testZoneObj.threshold * 0.83);
+  checkCrowdAlerts();
+  assertEqual(SimState.alerts.length, countAfterWarn, 'Crowd alert warning still suppressed (not recovered below 75%)');
+  
+  testZoneObj.current = Math.round(testZoneObj.threshold * 0.73);
+  checkCrowdAlerts();
+  assertEqual(SimState.sentAlerts[testZoneObj.id], undefined, 'Warning state cleared when recovering below 75%');
+  
+  testZoneObj.current = Math.round(testZoneObj.threshold * 0.82);
+  checkCrowdAlerts();
+  assertEqual(SimState.alerts.length, countAfterWarn + 1, 'New crowd alert is generated after recovering below 75%');
+  
+  testZoneObj.current = origZoneVal;
 
   // ========== DISPLAY RESULTS ==========
   displayResults();
 }
 
 function displayResults() {
-  var container = document.getElementById('testResultsContainer');
+  const container = document.getElementById('testResultsContainer');
   if (!container) return;
-  var pct = testResults.total > 0 ? Math.round(testResults.passed / testResults.total * 100) : 0;
-  var summary = '<div style="font-size:1.5rem;font-weight:800;margin-bottom:16px;color:' + (pct === 100 ? '#10b981' : '#f59e0b') + '">' + pct + '% Passed (' + testResults.passed + '/' + testResults.total + ')</div>';
-  var html = summary + testResults.details.map(function(d) {
-    var color = d.status === 'PASS' ? '#10b981' : '#ef4444';
-    var icon = d.status === 'PASS' ? '✅' : '❌';
+  const pct = testResults.total > 0 ? Math.round(testResults.passed / testResults.total * 100) : 0;
+  const summary = '<div style="font-size:1.5rem;font-weight:800;margin-bottom:16px;color:' + (pct === 100 ? '#10b981' : '#f59e0b') + '">' + pct + '% Passed (' + testResults.passed + '/' + testResults.total + ')</div>';
+  const html = summary + testResults.details.map(function(d) {
+    const color = d.status === 'PASS' ? '#10b981' : '#ef4444';
+    const icon = d.status === 'PASS' ? '✅' : '❌';
     return '<div style="padding:4px 0;font-size:0.82rem;color:' + color + '">' + icon + ' ' + d.name + '</div>';
   }).join('');
   container.innerHTML = html;

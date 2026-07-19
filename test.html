@@ -71,6 +71,18 @@
     <div id="crowdAlerts" role="list" aria-live="assertive"></div>
   </section>
   <section class="page" id="page-accessibility" role="region" aria-label="Accessibility"><div class="page-header"><h1 tabindex="-1">A11y</h1></div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">👤 Register Accessibility Profile</div>
+      <label for="a11yProfileSelect" class="sr-only">Select accommodation need:</label>
+      <select id="a11yProfileSelect" class="chat-input" onchange="window.StadiumApp.registerA11yNeed(this.value)">
+        <option value="none">None / Standard</option>
+        <option value="mobility">♿ Mobility</option>
+        <option value="visual">👁️ Visual</option>
+        <option value="hearing">👂 Hearing</option>
+        <option value="cognitive">🧠 Cognitive</option>
+      </select>
+      <span id="a11yProfileStatus">Active Profile: Standard</span>
+    </div>
     <div id="a11yStats" aria-live="polite"></div>
     <table class="infra-table" aria-label="Infrastructure"><thead><tr><th scope="col">Facility</th><th scope="col">Type</th><th scope="col">Zone</th><th scope="col">Status</th></tr></thead><tbody id="infraBody"></tbody></table>
     <div id="a11yAlerts" role="list" aria-live="polite"></div>
